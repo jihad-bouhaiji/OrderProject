@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -24,7 +23,7 @@ public class OrderController {
 
     @GetMapping(value = "/orders/{id}", produces = "application/json")
     public Order getOrderWithId(@PathVariable String id){
-        return facade.getOrder(UUID.fromString(id));
+        return facade.getOrder(id);
     }
 
     //since = yyyymmdd

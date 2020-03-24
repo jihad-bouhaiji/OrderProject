@@ -23,10 +23,11 @@ public class OrderFacade {
 
     private final OrderService orderService;
     private final PrintService printService;
+    private final OrderDTOMapper mapper = new OrderDTOMapper();
 
 
-    public UUID addOrder(String client, List<String> orderLines){
-        OrderDto dto = new OrderDto(UUID.randomUUID(),client, ZonedDateTime.now().toString(),parseOrderLines(orderLines));
+    public String addOrder(String client, List<String> orderLines){
+        OrderDto dto = new OrderDto(UUID.randomUUID().toString(),client, ZonedDateTime.now().toString(),parseOrderLines(orderLines));
         try {
             orderService.addOrder(dto);
         } catch (EmptyOrderException e) {
@@ -35,21 +36,21 @@ public class OrderFacade {
         return dto.getId();
     }
 
-    public Order getOrder(UUID id){
+    public Order getOrder(String id){
         try{
-            return OrderDTOMapper.mapToOrder(orderService.getOrder(id));
+            return mapper.mapToOrder(orderService.getOrder(id));
         } catch (OrderNotFoundException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public void removeOrder(UUID id) { orderService.removeOrder(id);}
+    public void removeOrder(String id) { orderService.removeOrder(id);}
 
     public List<Order> getAllOrders(){
         return orderService.getAllOrders()
                 .stream()
-                .map(OrderDTOMapper::mapToOrder)
+                .map(mapper::mapToOrder)
                 .collect(Collectors.toList());
     }
 

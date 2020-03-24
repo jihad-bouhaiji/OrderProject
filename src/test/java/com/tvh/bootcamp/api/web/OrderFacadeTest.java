@@ -30,6 +30,7 @@ import static org.mockito.Mockito.*;
 public class OrderFacadeTest {
     private List<Order> testOrders;
     private OrderDto basicDto;
+    private OrderDTOMapper mapper = new OrderDTOMapper();
 
 
     @Mock
@@ -44,19 +45,19 @@ public class OrderFacadeTest {
     @BeforeEach
     void setUp() {
         testOrders = List.of(
-                Order.builder().withId(UUID.randomUUID())
-                        .withClient("Jihad")
-                        .withCreationDateTime(ZonedDateTime.now())
-                        .withOrderLines(new ArrayList<Order.Line>(List.of(
+                Order.builder().id(UUID.randomUUID().toString())
+                        .client("Jihad")
+                        .creationDateTime(ZonedDateTime.now())
+                        .orderLines(new ArrayList<>(List.of(
                                 new Order.Line("gun", 5, 2),
                                 new Order.Line("MAG", 3, 10),
                                 new Order.Line("bullet", 1, 20),
                                 new Order.Line("silver bullet", 10, 1))))
                         .build(),
-                Order.builder().withId(UUID.randomUUID())
-                        .withClient("Belmont")
-                        .withCreationDateTime(ZonedDateTime.now())
-                        .withOrderLines(new ArrayList<Order.Line>(List.of(
+                Order.builder().id(UUID.randomUUID().toString())
+                        .client("Belmont")
+                        .creationDateTime(ZonedDateTime.now())
+                        .orderLines(new ArrayList<>(List.of(
                                 new Order.Line("cross", 5, 2),
                                 new Order.Line("whip", 3, 10),
                                 new Order.Line("booze", 1, 20),
@@ -64,10 +65,10 @@ public class OrderFacadeTest {
                         .build());
 
         basicDto = OrderDto.builder()
-                .withId(UUID.randomUUID())
-                .withClient("basic")
-                .withCreationDateTime(ZonedDateTime.now().toString())
-                .withOrderLines(new ArrayList<OrderDto.LineDto>(List.of(
+                .id(UUID.randomUUID().toString())
+                .client("basic")
+                .creationDateTime(ZonedDateTime.now().toString())
+                .orderLines(new ArrayList<>(List.of(
                         new OrderDto.LineDto("gun", 5, 2),
                         new OrderDto.LineDto("MAG", 3, 10),
                         new OrderDto.LineDto("bullet", 1, 20),
@@ -78,7 +79,7 @@ public class OrderFacadeTest {
     @Test
     void GetAllOrdersTest(){
         when(orderService.getAllOrders()).thenReturn(testOrders.stream()
-                .map(OrderDTOMapper::mapToDto)
+                .map(mapper::mapToDto)
                 .collect(Collectors.toList()));
 
         List<Order> orders = orderFacade.getAllOrders();
@@ -100,7 +101,7 @@ public class OrderFacadeTest {
     void AddOrderTest() {
         ArgumentCaptor<OrderDto> dtoArgumentCaptor = ArgumentCaptor.forClass(OrderDto.class);
         doNothing().when(orderService).addOrder(dtoArgumentCaptor.capture());
-        UUID idCreated = orderFacade.addOrder("test",List.of("test 2 2", "test 3 3"));
+        String idCreated = orderFacade.addOrder("test",List.of("test 2 2", "test 3 3"));
 
         verify(orderService, VerificationModeFactory.times(1)).addOrder(any());
         assertEquals(idCreated,dtoArgumentCaptor.getValue().getId());
@@ -108,7 +109,7 @@ public class OrderFacadeTest {
 
     @Test
     void RemoveOrderTest() {
-        UUID randomId = UUID.randomUUID();
+        String randomId = UUID.randomUUID().toString();
         orderFacade.removeOrder(randomId);
 
         verify(orderService).removeOrder(randomId);
@@ -117,9 +118,9 @@ public class OrderFacadeTest {
     @SneakyThrows
     @Test
     void getOrderTest(){
-        UUID orderToGet = testOrders.get(0).getId();
+        String orderToGet = testOrders.get(0).getId();
         when(orderService.getOrder(orderToGet))
-                .thenReturn(OrderDTOMapper.mapToDto(testOrders.get(0)));
+                .thenReturn(mapper.mapToDto(testOrders.get(0)));
 
         Order receivedOrder = orderFacade.getOrder(orderToGet);
 

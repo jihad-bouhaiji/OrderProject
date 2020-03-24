@@ -8,31 +8,32 @@ import java.util.ArrayList;
 
 @Component
 public class OrderDTOMapper {
-    public static Order mapToOrder(OrderDto DTO) {
+
+    public Order mapToOrder(OrderDto dto) {
         ArrayList<Order.Line> orderLines = new ArrayList<>();
-        for (OrderDto.LineDto dto : DTO.getOrderLines()) {
+        for (OrderDto.LineDto Dto : dto.getOrderLines()) {
             orderLines.add(
-                    new Order.Line(dto.getProduct(), dto.getPrice(), dto.getAmount())
+                    new Order.Line(Dto.getProduct(), Dto.getPrice(), Dto.getAmount())
             );
         }
 
-        return Order.builder().withId(DTO.getId())
-                .withClient(DTO.getClient())
-                .withCreationDateTime(ZonedDateTime.parse(DTO.getCreationDateTime()))
-                .withOrderLines(orderLines)
+        return Order.builder().id(dto.getId())
+                .client(dto.getClient())
+                .creationDateTime(ZonedDateTime.parse(dto.getCreationDateTime()))
+                .orderLines(orderLines)
                 .build();
     }
 
-    public static OrderDto mapToDto(Order order)
+    public OrderDto mapToDto(Order order)
     {
         ArrayList<OrderDto.LineDto> dtoLines = new ArrayList<>();
         for (Order.Line line : order.getOrderLines()) {
             dtoLines.add(new OrderDto.LineDto(line.getProduct(),line.getPrice(),line.getAmount()));
         }
-        return OrderDto.builder().withId(order.getId())
-                .withClient(order.getClient())
-                .withCreationDateTime(order.getCreationDateTime().toString())
-                .withOrderLines(dtoLines)
+        return OrderDto.builder().id(order.getId())
+                .client(order.getClient())
+                .creationDateTime(order.getCreationDateTime().toString())
+                .orderLines(dtoLines)
                 .build();
     }
 }

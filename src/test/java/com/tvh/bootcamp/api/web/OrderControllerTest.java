@@ -32,19 +32,19 @@ public class OrderControllerTest {
     @BeforeEach
     void setUp(){
         testOrders = List.of(
-                Order.builder().withId(UUID.randomUUID())
-                        .withClient("Jihad")
-                        .withCreationDateTime(ZonedDateTime.of(2020,02,2,2,2,2,2, ZoneId.systemDefault()))
-                        .withOrderLines(new ArrayList<Order.Line>(List.of(
+                Order.builder().id(UUID.randomUUID().toString())
+                        .client("Jihad")
+                        .creationDateTime(ZonedDateTime.of(2020,2,2,2,2,2,2, ZoneId.systemDefault()))
+                        .orderLines(new ArrayList<>(List.of(
                                 new Order.Line("gun", 5, 2),
                                 new Order.Line("MAG", 3, 10),
                                 new Order.Line("bullet", 1, 20),
                                 new Order.Line("silver bullet", 10, 1))))
                         .build(),
-                Order.builder().withId(UUID.randomUUID())
-                        .withClient("Belmont")
-                        .withCreationDateTime(ZonedDateTime.now())
-                        .withOrderLines(new ArrayList<Order.Line>(List.of(
+                Order.builder().id(UUID.randomUUID().toString())
+                        .client("Belmont")
+                        .creationDateTime(ZonedDateTime.now())
+                        .orderLines(new ArrayList<>(List.of(
                                 new Order.Line("cross", 5, 2),
                                 new Order.Line("whip", 3, 10),
                                 new Order.Line("booze", 1, 20),
@@ -61,7 +61,7 @@ public class OrderControllerTest {
     @Test
     void GetOrderWithIdTest(){
         Mockito.when(facade.getOrder(testOrders.get(0).getId())).thenReturn(testOrders.get(0));
-        assertEquals(controller.getOrderWithId(testOrders.get(0).getId().toString()),testOrders.get(0));
+        assertEquals(controller.getOrderWithId(testOrders.get(0).getId()),testOrders.get(0));
     }
 
     @Test

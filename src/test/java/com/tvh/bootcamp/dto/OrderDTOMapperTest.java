@@ -23,20 +23,20 @@ class OrderDTOMapperTest {
     @BeforeEach
     void setUp(){
         testDto = OrderDto.builder()
-                .withId(UUID.randomUUID())
-                .withClient("Belmont")
-                .withCreationDateTime(ZonedDateTime.now().toString())
-                .withOrderLines(new ArrayList<OrderDto.LineDto>(List.of(
+                .id(UUID.randomUUID().toString())
+                .client("Belmont")
+                .creationDateTime(ZonedDateTime.now().toString())
+                .orderLines(new ArrayList<>(List.of(
                         new OrderDto.LineDto("gun", 5, 2),
                         new OrderDto.LineDto("booze", 3, 1000000),
                         new OrderDto.LineDto("whip", 1, 20),
                         new OrderDto.LineDto("Sypha", 10000000, 1))))
                 .build();
 
-        testOrder = Order.builder().withId(UUID.randomUUID())
-                .withClient("Jihad")
-                .withCreationDateTime(ZonedDateTime.now())
-                .withOrderLines(new ArrayList<Order.Line>(List.of(
+        testOrder = Order.builder().id(UUID.randomUUID().toString())
+                .client("Jihad")
+                .creationDateTime(ZonedDateTime.now())
+                .orderLines(new ArrayList<>(List.of(
                         new Order.Line("gun", 5, 2),
                         new Order.Line("MAG", 3, 10),
                         new Order.Line("bullet", 1, 20),

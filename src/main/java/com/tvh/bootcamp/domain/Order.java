@@ -1,22 +1,23 @@
 package com.tvh.bootcamp.domain;
 
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.UUID;
+import lombok.*;
 
+import javax.persistence.*;
+import java.time.ZonedDateTime;
+import java.util.Objects;
+import java.util.List;
+
+@NoArgsConstructor
+@Entity
+@Table(name = "orders")
+@Builder
 public class Order {
-    private UUID id;
+    @Id
+    private String id;
     private String client;
     private ZonedDateTime creationDateTime;
-    private ArrayList<Line> orderLines;
-
-    private Order(UUID id, String client, ZonedDateTime creationDateTime, ArrayList<Line> orderLines) {
-        this.id = id;
-        this.client = client;
-        this.creationDateTime = creationDateTime;
-        this.orderLines = orderLines;
-    }
+    @ElementCollection
+    private List<Line> orderLines;
 
     @Override
     public boolean equals(Object o) {
@@ -34,28 +35,16 @@ public class Order {
         return Objects.hash(getId(), getClient(), getCreationDateTime(), getOrderLines());
     }
 
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Embeddable
+    @Getter
+    @Setter
+    @Builder
     public static class Line{
-        private double price;
         private String product;
+        private double price;
         private int amount;
-
-        public Line(String product, double price, int amount) {
-            this.price = price;
-            this.product = product;
-            this.amount = amount;
-        }
-
-        public double getPrice() {
-            return price;
-        }
-
-        public String getProduct() {
-            return product;
-        }
-
-        public int getAmount() {
-            return amount;
-        }
 
         @Override
         public String toString() {
@@ -82,49 +71,16 @@ public class Order {
         }
     }
 
-    public static class Builder{
-        private UUID id;
-        private String client;
-        private ZonedDateTime creationDateTime;
-        private ArrayList<Line> orderLines;
 
-        public Builder(){}
-
-        public Order.Builder withId(UUID id){
-            this.id = id;
-            return this;
-        }
-        public Order.Builder withClient(String client){
-            this.client = client;
-            return this;
-        }
-        public Order.Builder withCreationDateTime(ZonedDateTime creationDateTime){
-            this.creationDateTime = creationDateTime;
-            return this;
-        }
-        public Order.Builder withOrderLines(ArrayList<Order.Line> orderLines){
-            this.orderLines = orderLines;
-            return this;
-        }
-
-        public Order build(){
-            return new Order(id,client,creationDateTime,orderLines);
-        }
-    }
-
-    public static Builder builder(){
-        return new Builder();
-    }
-
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
-    public void AddOrderLine(Order.Line line){
+    public void addOrderLine(Order.Line line){
         orderLines.add(line);
     }
 
-    public ArrayList<Line> getOrderLines() {
+    public List<Line> getOrderLines() {
         return orderLines;
     }
 

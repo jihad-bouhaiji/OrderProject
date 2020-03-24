@@ -40,19 +40,19 @@ public class OrderServiceTest {
     @BeforeEach
     void setUp() {
         testOrders = List.of(
-                Order.builder().withId(UUID.randomUUID())
-                        .withClient("Jihad")
-                        .withCreationDateTime(ZonedDateTime.now())
-                        .withOrderLines(new ArrayList<Order.Line>(List.of(
+                Order.builder().id(UUID.randomUUID().toString())
+                        .client("Jihad")
+                        .creationDateTime(ZonedDateTime.now())
+                        .orderLines(new ArrayList<>(List.of(
                                 new Order.Line("gun", 5, 2),
                                 new Order.Line("MAG", 3, 10),
                                 new Order.Line("bullet", 1, 20),
                                 new Order.Line("silver bullet", 10, 1))))
                         .build(),
-                Order.builder().withId(UUID.randomUUID())
-                        .withClient("Belmont")
-                        .withCreationDateTime(ZonedDateTime.now())
-                        .withOrderLines(new ArrayList<Order.Line>(List.of(
+                Order.builder().id(UUID.randomUUID().toString())
+                        .client("Belmont")
+                        .creationDateTime(ZonedDateTime.now())
+                        .orderLines(new ArrayList<>(List.of(
                                 new Order.Line("cross", 5, 2),
                                 new Order.Line("whip", 3, 10),
                                 new Order.Line("booze", 1, 20),
@@ -60,10 +60,10 @@ public class OrderServiceTest {
                         .build());
 
         basicDto = OrderDto.builder()
-                .withId(UUID.randomUUID())
-                .withClient("basic")
-                .withCreationDateTime(ZonedDateTime.now().toString())
-                .withOrderLines(new ArrayList<OrderDto.LineDto>(List.of(
+                .id(UUID.randomUUID().toString())
+                .client("basic")
+                .creationDateTime(ZonedDateTime.now().toString())
+                .orderLines(new ArrayList<>(List.of(
                         new OrderDto.LineDto("gun", 5, 2),
                         new OrderDto.LineDto("MAG", 3, 10),
                         new OrderDto.LineDto("bullet", 1, 20),
@@ -76,39 +76,39 @@ public class OrderServiceTest {
 
     @Test
     void GetAllOrdersTest() {
-        Mockito.when(repository.getAll()).thenReturn(testOrders);
+        Mockito.when(repository.findAll()).thenReturn(testOrders);
         List<OrderDto> allOrders = service.getAllOrders();
         assertEquals(testOrders.size(), allOrders.size());
     }
 
     @Test
     void RemoveOrderCallTest() {
-        UUID idToDelete = UUID.randomUUID();
-        Mockito.doNothing().when(repository).removeOrder(idToDelete);
+        String idToDelete = UUID.randomUUID().toString();
+        Mockito.doNothing().when(repository).deleteById(idToDelete);
         service.removeOrder(idToDelete);
-        Mockito.verify(repository).removeOrder(idToDelete);
+        Mockito.verify(repository).deleteById(idToDelete);
     }
 
     @Test
     void AddBasicOrderTest() {
-        Mockito.doNothing().when(repository).add(any(Order.class));
+        Mockito.doNothing().when(repository).save(any(Order.class));
         assertDoesNotThrow(() -> service.addOrder(basicDto));
-        Mockito.verify(repository).add(any(Order.class));
+        Mockito.verify(repository).save(any(Order.class));
     }
 
     @Test
     void GetFirstOrderFromTestOrders() {
-        Mockito.doReturn(testOrders.get(0)).when(repository).getOrder(testOrders.get(0).getId());
+        Mockito.doReturn(testOrders.get(0)).when(repository).findById(testOrders.get(0).getId());
         OrderDto dto = assertDoesNotThrow(() -> service.getOrder(testOrders.get(0).getId()));
         assertEquals(dto.getId(), testOrders.get(0).getId());
     }
 
     @Test
     void GetOrderNotInRepositoryTest() {
-        UUID idToGet = UUID.randomUUID();
-        Mockito.doReturn(null).when(repository).getOrder(idToGet);
+        String idToGet = UUID.randomUUID().toString();
+        Mockito.doReturn(null).when(repository).findById(idToGet);
         assertThrows(OrderNotFoundException.class, () -> service.getOrder(idToGet));
-        Mockito.verify(repository).getOrder(idToGet);
+        Mockito.verify(repository).findById(idToGet);
     }
 
     @Test
